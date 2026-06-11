@@ -1,30 +1,15 @@
-Library Catalog API
-REST API для управления библиотечным каталогом, построенный на современном стеке Python.
+# Library Catalog API
 
-🚀 Технологии
-FastAPI — современный асинхронный веб-фреймворк
+REST API для управления библиотечным каталогом. Построен на современном стеке Python с акцентом на качество кода, асинхронность и чистую архитектуру.
 
-SQLAlchemy 2.0 — асинхронная ORM
+## ✨ Особенности
 
-PostgreSQL — реляционная база данных
-
-Alembic — миграции схемы БД
-
-Pydantic V2 — валидация данных
-
-Poetry — управление зависимостями
-
-📦 Инструменты качества
-Ruff — линтер и форматтер (быстрая замена flake8, isort, black)
-
-Mypy — статическая типизация
-
-Pytest — тестирование (unit + integration)
-
-Pre-commit — автоматические проверки перед коммитом
-
-🐳 Запуск
-bash
+- ⚡ **Асинхронность** — полностью async стек (FastAPI + SQLAlchemy)
+- 📝 **Автодокументация** — Swagger UI и ReDoc из коробки
+- 🧱 **Чистая архитектура** — разделение на API, Domain, Data слои
+- 🐘 **PostgreSQL** — production-ready СУБД
+- 🛠 **Инструменты качества** — Ruff, Mypy, Pytest
+- 🐳 **Контейнеризация** — готовый docker-compose для БД
 # Клонировать репозиторий
 git clone https://github.com/ваш-username/library-catalog-api
 cd library-catalog-api
@@ -40,34 +25,36 @@ poetry run alembic upgrade head
 
 # Запустить сервер
 poetry run uvicorn src.library_catalog.main:app --reload
-📚 API документация
-После запуска сервера документация доступна по адресам:
+
+## 📚 API документация
+# После запуска сервера документация доступна по адресам:
 
 Swagger UI: http://localhost:8000/docs
 
 ReDoc: http://localhost:8000/redoc
 
-🏗️ Архитектура
-Проект построен на многослойной архитектуре:
+## 🏗️ Архитектура
+# Проект построен на многослойной архитектуре:
 
-text
 API Layer → Domain Layer → Data Layer → Database
+
 API Layer — эндпоинты и Pydantic схемы
 
 Domain Layer — бизнес-логика и сервисы
 
 Data Layer — репозитории и SQLAlchemy модели
 
-📁 Структура проекта
-text
+## 📁 Структура проекта
+
 src/library_catalog/
 ├── api/           # Роутеры и Pydantic схемы
 ├── core/          # Конфигурация, логирование, исключения
 ├── data/          # Модели БД и репозитории
 ├── domain/        # Бизнес-логика и сервисы
 └── external/      # Внешние API клиенты
-👨‍💻 Разработка
-bash
+
+## 👨‍💻 Разработка
+
 # Запустить тесты
 poetry run pytest
 
