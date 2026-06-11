@@ -26,14 +26,14 @@ poetry run alembic upgrade head
 # Запустить сервер
 poetry run uvicorn src.library_catalog.main:app --reload
 
-## 📚 API документация
+# 📚 API документация
 # После запуска сервера документация доступна по адресам:
 
 Swagger UI: http://localhost:8000/docs
 
 ReDoc: http://localhost:8000/redoc
 
-## 🏗️ Архитектура
+# 🏗️ Архитектура
 # Проект построен на многослойной архитектуре:
 
 API Layer → Domain Layer → Data Layer → Database
@@ -44,7 +44,7 @@ Domain Layer — бизнес-логика и сервисы
 
 Data Layer — репозитории и SQLAlchemy модели
 
-## 👨‍💻 Разработка
+# 👨‍💻 Разработка
 
 # Запустить тесты
 poetry run pytest
