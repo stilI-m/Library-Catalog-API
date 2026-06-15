@@ -1,0 +1,24 @@
+
+from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.orm import DeclarativeBase
+
+from src.library_catalog.core.config import settings
+
+
+class Base(DeclarativeBase):
+    pass
+
+engine = create_async_engine(settings.database_url_str, pool_size= settings.database_pool_size, echo=settings.debug,)
+
+async_session = async_sessionmaker(bind=engine,  class_=AsyncSession, expire_on_commit=False,)
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
