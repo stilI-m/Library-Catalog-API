@@ -9,7 +9,7 @@ from src.library_catalog.core.config import settings
 class Base(DeclarativeBase):
     pass
 
-engine = create_async_engine(settings.database_url_str, pool_size= settings.database_pool_size, echo=settings.debug,)
+engine = create_async_engine(str(settings.database_url), pool_size= settings.database_pool_size, echo=settings.debug,)
 
 async_session = async_sessionmaker(bind=engine,  class_=AsyncSession, expire_on_commit=False,)
 
