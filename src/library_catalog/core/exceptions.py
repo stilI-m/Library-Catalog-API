@@ -1,3 +1,6 @@
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+
 class AppException(Exception):
     """Базовое исключение приложения."""
     def __init__(self, message: str, status_code: int = 400):
@@ -12,3 +15,8 @@ class NotFoundException(AppException):
             message=f"{resource} with id '{identifier}' not found",
             status_code=404,
         )
+def register_exception_handlers(app: FastAPI) -> None:
+    """Зарегистрировать обработчики исключений."""
+    @app.exception_handler(AppException)
+    async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
