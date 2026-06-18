@@ -10,21 +10,21 @@ REST API для управления библиотечным каталогом
 - 🐘 **PostgreSQL** — production-ready СУБД
 - 🛠 **Инструменты качества** — Ruff, Mypy, Pytest
 - 🐳 **Контейнеризация** — готовый docker-compose для БД
-# Клонировать репозиторий
-git clone https://github.com/ваш-username/library-catalog-api
+## 🚀 Быстрый старт (через Docker)
+
+Убедитесь, что у вас установлены Docker и Docker Compose.
+
+```bash
+# 1. Клонировать репозиторий
+git clone https://github.com/stilI-m/Library-Catalog-API
 cd library-catalog-api
+  
+# 2. Собрать и запустить контейнеры (База данных + API)
+docker-compose up -d --build
 
-# Установить зависимости
-poetry install
-
-# Запустить PostgreSQL в Docker
-docker-compose up -d
-
-# Применить миграции
-poetry run alembic upgrade head
-
-# Запустить сервер
-poetry run uvicorn src.library_catalog.main:app --reload
+# 3. Применить миграции для создания таблиц в БД
+docker-compose exec app alembic upgrade head
+```
 
 # 📚 API документация
 # После запуска сервера документация доступна по адресам:
@@ -45,15 +45,19 @@ Domain Layer — бизнес-логика и сервисы
 Data Layer — репозитории и SQLAlchemy модели
 
 # 👨‍💻 Разработка
-
 # Запустить тесты
+```bash
 poetry run pytest
-
+```
 # Проверить типы
+```bash
 poetry run mypy src/
-
+```
 # Запустить линтер
+```bash
 poetry run ruff check src/
-
+```
 # Отформатировать код
+```bash
 poetry run ruff format src/
+```
