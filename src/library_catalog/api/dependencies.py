@@ -1,0 +1,69 @@
+from contextlib import asynccontextmanager
+from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request
+
+from ..core.database import get_db
+from ..data.repositories.book_repository import BookRepository
+from ..domain.services.book_service import BookService
+from ..external.openlibrary.client import OpenLibraryClient
+
+
+
+# ========== EXTERNAL CLIENTS (Singletons) ==========
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = OpenLibraryClient(...)
+    app.state.ol_client = client
+    yield client
+    await client.close()
+def get_openlibrary_client(request: Request) -> OpenLibraryClient:
+    """
+    Получить singleton OpenLibraryClient.
+    """
+    return request.app.state.ol_client
+
+# ========== REPOSITORIES ==========
+
+async def get_book_repository(
+        db: Annotated[AsyncSession, Depends(get_db)]
+) -> BookRepository:
+    """
+    Создать BookRepository для текущей сессии БД.
+
+    Создается новый экземпляр для каждого запроса.
+    """
+    return BookRepository(db)
+
+
+# ========== SERVICES ==========
+
+async def get_book_service(
+        book_repo: Annotated[BookRepository, Depends(get_book_repository)],
+        ol_client: Annotated[OpenLibraryClient, Depends(get_openlibrary_client)],
+) -> BookService:
+    """
+    Создать BookService с внедренными зависимостями.
+
+    FastAPI автоматически разрешит все зависимости:
+    1. get_db() создаст AsyncSession
+    2. get_book_repository() создаст BookRepository с session
+    3. get_openlibrary_client() вернет singleton клиент
+    4. Все внедрится в BookService
+    """
+    return BookService(
+        book_repository=book_repo,
+        openlibrary_client=ol_client,
+    )
+
+
+# ========== TYPE ALIASES ДЛЯ УДОБСТВА ==========
+
+# Можно использовать в роутерах так:
+# async def my_route(service: BookServiceDep):
+BookServiceDep = Annotated[BookService, Depends(get_book_service)]
+BookRepoDep = Annotated[BookRepository, Depends(get_book_repository)]
+DbSessionDep = Annotated[AsyncSession, Depends(get_db)]

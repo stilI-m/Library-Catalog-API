@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
     container_name: library_catalog_db
     environment:
@@ -9,9 +7,22 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: library_catalog
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: library_catalog_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/library_catalog
+      - ENVIRONMENT=development
+      - DEBUG=false
+      - ENVIRONMENT=development
 
 volumes:
   postgres_data:
