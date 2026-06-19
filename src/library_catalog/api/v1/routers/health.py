@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
+from fastapi import Response
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..schemas.common import HealthCheckResponse
 from ...dependencies import DbSessionDep
@@ -13,8 +13,9 @@ router = APIRouter(prefix="/health", tags=["Health"])
     response_model=HealthCheckResponse,
     summary="Health Check",
     description="Проверить состояние сервиса и подключение к БД",
+    status_code=200,
 )
-async def health_check(db: DbSessionDep):
+async def health_check(db: DbSessionDep, response: Response):
     """
     Проверить здоровье сервиса.
 
@@ -28,8 +29,8 @@ async def health_check(db: DbSessionDep):
         db_status = "connected"
     except Exception:
         db_status = "disconnected"
-
+        response.status_code = 503
     return HealthCheckResponse(
-        status="healthy",
+        status="healthy" if db_status == "connected" else "unhealthy",
         database=db_status,
     )

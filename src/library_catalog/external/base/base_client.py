@@ -42,9 +42,11 @@ class BaseApiClient(ABC):
                     wait_time = self.backoff * (2**attempt)
                     self.logger.warning(f"Server error, retrying after {wait_time} seconds")
                     await asyncio.sleep(wait_time)
+                    continue
                 else:
                     self.logger.error(f"HTTP error: {e}")
                     raise
+            raise RuntimeError(f"All {self.retries} attempts failed for: {url}")
     async def _get(self, path:str, **kwargs) -> dict:
         """Get response"""
         return await self._request('GET', path, **kwargs)

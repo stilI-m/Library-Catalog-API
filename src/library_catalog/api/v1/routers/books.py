@@ -1,3 +1,4 @@
+import datetime
 from uuid import UUID
 from typing import Annotated
 
@@ -28,9 +29,9 @@ async def create_book(book_data: BookCreate, service: BookServiceDep,):
     return await service.create_book(book_data)
 @router.get("/", response_model=PaginatedResponse[ShowBook], summary="Получить список книг", description="Получить список книг с фильтрацией и пагинацией",)
 async def get_books(service: BookServiceDep, pagination: Annotated[PaginationParams, Depends()], title: str | None = Query(None, description="Поиск по названию"),
-    author: str | None = Query(None, description="Поиск по автору"),
-    genre: str | None = Query(None, description="Фильтр по жанру"),
-    year: int | None = Query(None, description="Фильтр по году"),
+    author: str | None = Query(None, max_length=200, description="Поиск по автору"),
+    genre: str | None = Query(None, max_length=200, description="Фильтр по жанру"),
+    year: int | None = Query(None, ge= 1000, le= 2100, description="Фильтр по году"),
     available: bool | None = Query(None, description="Фильтр по доступности"),):
     """Получить список книг с фильтрацией.
 

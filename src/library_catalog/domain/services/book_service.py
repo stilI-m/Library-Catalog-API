@@ -1,8 +1,15 @@
 from uuid import UUID
+from datetime import datetime
 from ...api.v1.schemas.book import BookCreate, BookUpdate, ShowBook
 from ...data.repositories.book_repository import BookRepository
 from ...external.openlibrary.client import OpenLibraryClient
-from ..exceptions import *
+from ..exceptions import (
+    BookNotFoundException,
+    BookAlreadyExistsException,
+    InvalidYearException,
+    InvalidPagesException,
+    OpenLibraryException,
+)
 from ..mappers.book_mapper import BookMapper
 
 class BookService:
@@ -104,7 +111,7 @@ class BookService:
         # Обновить
         updated = await self.book_repo.update(
             book_id,
-            **book_data.dict(exclude_unset=True)
+            **book_data.model_dump(exclude_unset=True)
         )
 
         return BookMapper.to_show_book(updated)
@@ -122,13 +129,9 @@ class BookService:
 
     async def search_books(
             self,
-            title: str | None = None,
-            author: str | None = None,
-            genre: str | None = None,
-            year: int | None = None,
-            available: bool | None = None,
             limit: int = 20,
             offset: int = 0,
+            **kwargs,
     ) -> tuple[list[ShowBook], int]:
         """
         Поиск книг с фильтрацией и пагинацией.
@@ -136,24 +139,11 @@ class BookService:
         Returns:
             tuple: (список книг, общее количество)
         """
-        # Получить книги
-        books = await self.book_repo.find_by_filters(
-            title=title,
-            author=author,
-            genre=genre,
-            year=year,
-            available=available,
+        # Получить книги и подсчитать общее количество
+        books, total = await self.book_repo.find_with_count(
             limit=limit,
             offset=offset,
-        )
-
-        # Подсчитать общее количество
-        total = await self.book_repo.count_by_filters(
-            title=title,
-            author=author,
-            genre=genre,
-            year=year,
-            available=available,
+            **kwargs
         )
 
         return BookMapper.to_show_books(books), total
@@ -165,12 +155,9 @@ class BookService:
         self._validate_year(data.year)
         self._validate_pages(data.pages)
 
-    def _validate_year(self, year: int) -> None:
-        """Проверить что год валиден."""
-        from datetime import datetime
-
-        current_year = datetime.now().year
-        if year < 1000 or year > current_year:
+    def _validate_year(self, year: int, current_year: int | None = None):
+        cy = current_year or datetime.now().year
+        if year < 1000 or year > cy:
             raise InvalidYearException(year)
 
     def _validate_pages(self, pages: int) -> None:
