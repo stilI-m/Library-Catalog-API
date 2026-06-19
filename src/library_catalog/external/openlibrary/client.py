@@ -1,6 +1,8 @@
+import httpx
+
 from ..base.base_client import BaseApiClient
 from ...domain.exceptions import OpenLibraryException, OpenLibraryTimeoutException
-import httpx
+
 class OpenLibraryClient(BaseApiClient):
     """Клиент для Open Library API."""
 

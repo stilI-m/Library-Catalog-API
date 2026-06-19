@@ -1,8 +1,10 @@
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from functools import lru_cache
+
 from typing import Literal
-from typing import List
+
 class Settings(BaseSettings):
     app_name: str = "Library Catalog API"
     environment: Literal["development", 'staging', "production"]

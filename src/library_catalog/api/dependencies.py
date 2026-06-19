@@ -9,7 +9,7 @@ from ..core.database import get_db
 from ..data.repositories.book_repository import BookRepository
 from ..domain.services.book_service import BookService
 from ..external.openlibrary.client import OpenLibraryClient
-from ..core.config import settings
+
 
 
 # ========== EXTERNAL CLIENTS (Singletons) ==========

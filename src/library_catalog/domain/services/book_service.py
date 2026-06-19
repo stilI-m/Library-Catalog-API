@@ -1,8 +1,10 @@
 from uuid import UUID
 from datetime import datetime
+
 from ...api.v1.schemas.book import BookCreate, BookUpdate, ShowBook
 from ...data.repositories.book_repository import BookRepository
 from ...external.openlibrary.client import OpenLibraryClient
+from ..mappers.book_mapper import BookMapper
 from ..exceptions import (
     BookNotFoundException,
     BookAlreadyExistsException,
@@ -10,7 +12,7 @@ from ..exceptions import (
     InvalidPagesException,
     OpenLibraryException,
 )
-from ..mappers.book_mapper import BookMapper
+
 
 class BookService:
     """
@@ -18,7 +20,6 @@ class BookService:
 
     Содержит всю бизнес-логику приложения.
     """
-
     def __init__(
             self,
             book_repository: BookRepository,

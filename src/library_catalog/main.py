@@ -3,14 +3,11 @@ Library Catalog API - Точка входа приложения.
 """
 
 from contextlib import asynccontextmanager
-
-import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .external.openlibrary.client import OpenLibraryClient
 from .core.config import settings, Settings, get_settings
-from .core.database import dispose_engine
 from .core.exceptions import register_exception_handlers
 from .core.logging_config import setup_logging
 from .api.v1.routers import books, health
@@ -27,7 +24,6 @@ async def lifespan(app: FastAPI):
     - startup: настройка логирования
     - shutdown: закрытие подключений к БД
     """
-    # Startup
     setup_logging()
     settings = get_settings()
 

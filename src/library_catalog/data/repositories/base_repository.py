@@ -33,12 +33,12 @@ class BaseRepository(Generic[T]):
         if not kwargs:
             return await self.get_by_id(id)
 
-        # 2. Достаем объект из базы (используем уже написанный тобой метод)
+        # 2. Достаем объект из базы
         instance = await self.get_by_id(id)
         if not instance:
             return None
 
-        # 3. Меняем только те поля, которые пришли в kwargs (например, available=False)
+        # 3. Меняем только те поля, которые пришли в kwargs
         for key, value in kwargs.items():
             setattr(instance, key, value)
 
